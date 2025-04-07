@@ -1,2 +1,2 @@
 # whit
-Easy streaming media playback
+Simple streaming media playback
