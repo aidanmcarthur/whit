@@ -1,31 +1,32 @@
 {
   "name": "whit",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Simple streaming media playback",
+  "author": "Aidan McArthur",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "watch": "tsc -w",
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aidanmcarthur/whit.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/aidanmcarthur/whit/issues"
   },
   "homepage": "https://github.com/aidanmcarthur/whit#readme",
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite": "^6.2.5"
   }
 }
