@@ -1,2 +1,2 @@
 # whit
-A simple video player
+Easy streaming media playback
