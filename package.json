@@ -21,6 +21,9 @@
     "url": "https://github.com/aidanmcarthur/whit/issues"
   },
   "homepage": "https://github.com/aidanmcarthur/whit#readme",
+  "dependencies": {
+    "hls.js": "^1.6.2"
+  },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^4.3.4",

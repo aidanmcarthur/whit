@@ -6,7 +6,7 @@ if (container) {
     try {
         const player = new VideoPlayer({
             container,
-            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            videoUrl: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
             autoplay: false,
             controls: true,
             width: 1920,

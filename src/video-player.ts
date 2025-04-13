@@ -1,4 +1,5 @@
 import { VideoPlayerOptions, VideoPlayerControls } from './types/video-player';
+import Hls from 'hls.js';
 
 export class VideoPlayer implements VideoPlayerControls {
   private videoElement: HTMLVideoElement;
@@ -7,7 +8,6 @@ export class VideoPlayer implements VideoPlayerControls {
   private isPlaying: boolean = false;
 
   constructor(options: VideoPlayerOptions) {
-    console.log('Creating VideoPlayer instance with options:', options);
     this.container = options.container;
     this.videoElement = document.createElement('video');
     this.controlsContainer = document.createElement('div');
@@ -24,28 +24,24 @@ export class VideoPlayer implements VideoPlayerControls {
 
   private initializePlayer(options: VideoPlayerOptions): void {
     console.log('Initializing player with URL:', options.videoUrl);
-    this.videoElement.src = options.videoUrl;
     this.videoElement.autoplay = options.autoplay || false;
     this.videoElement.controls = false;
 
     if (options.width) this.videoElement.width = options.width;
     if (options.height) this.videoElement.height = options.height;
 
-    // Add error handling for the video element
-    this.videoElement.addEventListener('error', (e) => {
-      console.error('Video error:', e);
-      const videoError = this.videoElement.error;
-      if (videoError) {
-        console.error('Video error details:', {
-          code: videoError.code,
-          message: videoError.message
-        });
-      }
-    });
-
-    this.videoElement.addEventListener('loadeddata', () => {
-      console.log('Video data loaded');
-    });
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(options.videoUrl);
+      hls.attachMedia(this.videoElement);
+      hls.on(Hls.Events.MANIFEST_PARSED, this.play);
+    } else if (this.videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+      console.log('Using native HLS support');
+      this.videoElement.src = options.videoUrl;
+      this.videoElement.addEventListener('loadedmetadata', this.play);
+    } else {
+      alert('This browser does not support HLS.');
+    }
 
     this.container.appendChild(this.videoElement);
     this.container.appendChild(this.controlsContainer);
