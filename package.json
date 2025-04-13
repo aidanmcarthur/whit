@@ -1,6 +1,6 @@
 {
-  "name": "whit",
-  "version": "0.0.1",
+  "name": "whit-player",
+  "version": "0.0.2",
   "description": "Simple streaming media playback",
   "author": "Aidan McArthur",
   "license": "MIT",

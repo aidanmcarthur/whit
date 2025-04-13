@@ -15,7 +15,7 @@ export class VideoPlayer implements VideoPlayerControls {
     try {
       this.initializePlayer(options);
       this.setupControls();
-      console.log('VideoPlayer initialized successfully');
+
     } catch (error) {
       console.error('Error initializing VideoPlayer:', error);
       throw error;
@@ -26,7 +26,7 @@ export class VideoPlayer implements VideoPlayerControls {
     console.log('Initializing player with URL:', options.videoUrl);
     this.videoElement.src = options.videoUrl;
     this.videoElement.autoplay = options.autoplay || false;
-    this.videoElement.controls = false; // We'll implement our own controls
+    this.videoElement.controls = false;
 
     if (options.width) this.videoElement.width = options.width;
     if (options.height) this.videoElement.height = options.height;
@@ -52,7 +52,7 @@ export class VideoPlayer implements VideoPlayerControls {
   }
 
   private setupControls(): void {
-    console.log('Setting up controls');
+
     this.controlsContainer.className = 'video-controls';
     this.controlsContainer.innerHTML = `
       <button class="play-pause">Play</button>

@@ -11,6 +11,12 @@
 
 ## Installation
 
+Installation via NPM:
+
+```bash
+npm i whit-player
+```
+
 To set up the project locally:
 
 1. **Clone the Repository**:
