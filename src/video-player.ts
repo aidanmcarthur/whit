@@ -1,6 +1,6 @@
 import { VideoPlayerOptions, VideoPlayerControls } from './types/video-player';
 import Hls from 'hls.js';
-
+import './video-player.css';
 export class VideoPlayer implements VideoPlayerControls {
   private videoElement: HTMLVideoElement;
   private container: HTMLElement;
@@ -11,10 +11,13 @@ export class VideoPlayer implements VideoPlayerControls {
     this.container = options.container;
     this.videoElement = document.createElement('video');
     this.controlsContainer = document.createElement('div');
+
+    this.container.appendChild(this.videoElement);
+    this.container.appendChild(this.controlsContainer);
     
     try {
-      this.initializePlayer(options);
       this.setupControls();
+      this.initializePlayer(options);
 
     } catch (error) {
       console.error('Error initializing VideoPlayer:', error);
@@ -35,6 +38,9 @@ export class VideoPlayer implements VideoPlayerControls {
       hls.loadSource(options.videoUrl);
       hls.attachMedia(this.videoElement);
       hls.on(Hls.Events.MANIFEST_PARSED, this.play);
+      hls.on(Hls.Events.BUFFER_APPENDED, () => {
+        this.updateProgressBar();
+      });
     } else if (this.videoElement.canPlayType('application/vnd.apple.mpegurl')) {
       console.log('Using native HLS support');
       this.videoElement.src = options.videoUrl;
@@ -42,9 +48,6 @@ export class VideoPlayer implements VideoPlayerControls {
     } else {
       alert('This browser does not support HLS.');
     }
-
-    this.container.appendChild(this.videoElement);
-    this.container.appendChild(this.controlsContainer);
   }
 
   private setupControls(): void {
@@ -52,7 +55,9 @@ export class VideoPlayer implements VideoPlayerControls {
     this.controlsContainer.className = 'video-controls';
     this.controlsContainer.innerHTML = `
       <button class="play-pause">Play</button>
-      <input type="range" class="progress" min="0" max="100" value="0">
+      <div class="progress-wrapper">
+        <input type="range" class="progress" min="0" max="100" value="0">
+      </div>
       <button class="mute">Mute</button>
       <input type="range" class="volume" min="0" max="100" value="100">
     `;
@@ -73,17 +78,41 @@ export class VideoPlayer implements VideoPlayerControls {
       this.setVolume(Number((e.target as HTMLInputElement).value) / 100);
     });
 
-    this.videoElement.addEventListener('timeupdate', () => {
-      if (progressBar) {
-        progressBar.value = (this.videoElement.currentTime / this.videoElement.duration * 100).toString();
-      }
-    });
+    this.videoElement.addEventListener('timeupdate', this.updateProgressBar);
 
     progressBar.addEventListener('input', (e) => {
       const time = (Number((e.target as HTMLInputElement).value) / 100) * this.videoElement.duration;
       this.seek(time);
     });
   }
+
+  public updateProgressBar(): void {
+    if (!this.controlsContainer) return;
+    const progressBar = this.controlsContainer.querySelector('.progress') as HTMLInputElement;
+    const video = this.videoElement;
+  
+    if (!progressBar || !video.duration) return;
+  
+    const played = (video.currentTime / video.duration) * 100;
+
+    progressBar.value = played.toString();
+  
+    let buffered = 0;
+    if (video.buffered.length) {
+      buffered = (video.buffered.end(video.buffered.length - 1) / video.duration) * 100;
+    }
+  
+    progressBar.style.background = `linear-gradient(
+      to right,
+      #ff4d4d 0%,
+      #ff4d4d ${played}%,
+      #ccc ${played}%,
+      #ccc ${buffered}%,
+      #666 ${buffered}%,
+      #666 100%
+    )`;
+  };
+  
 
   public play(): void {
     console.log('Playing video');
@@ -115,6 +144,7 @@ export class VideoPlayer implements VideoPlayerControls {
   public seek(time: number): void {
     console.log('Seeking to:', time);
     this.videoElement.currentTime = time;
+    this.updateProgressBar();
   }
 
   public setVolume(volume: number): void {
